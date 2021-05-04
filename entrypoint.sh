@@ -7,8 +7,11 @@ chia init
 if [[ ${keys} == "generate" ]]; then
   echo "to use your own keys pass them as a text file -v /path/to/keyfile:/path/in/container and -e keys=\"/path/in/container\""
   chia keys generate
-else
+elif [ ! -z ${keys} ]  && [ -f ${keys} ]; then
   chia keys add -f ${keys}
+elif [ ! -f /root/.local/share/python_keyring/cryptfile_pass.cfg ]; then
+	echo "No python_keyring was found or mounted, no keys were specified, and keys was not 'generate' to generate a new keychain.  The application requires a keychain."
+	exit 1
 fi
 
 if [[ ! "$(ls -A /plots)" ]]; then
